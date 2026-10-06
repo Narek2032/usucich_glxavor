@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ուսուցչի Ընդհանուր Վահանակ | ԷկոԿետ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #f4f6f8; color: #333; padding: 25px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        
+        /* ՄՈՒՏՔԻ ՊԱՏՈՒՀԱՆԻ ՈՃԵՐ */
+        .login-card {
+            background: white; max-width: 400px; width: 100%; padding: 35px; border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center;
+        }
+        .login-card h2 { color: #2e7d32; margin-bottom: 8px; font-size: 1.5rem; }
+        .login-card p { font-size: 0.85rem; color: #666; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; font-size: 0.85rem; color: #444; margin-bottom: 5px; font-weight: 600; }
+        .form-group input {
+            width: 100%; padding: 11px 14px; border: 2px solid #c8e6c9; border-radius: 10px; font-size: 0.9rem; outline: none;
+        }
+        .login-btn {
+            background: linear-gradient(135deg, #4caf50, #2e7d32); color: white; border: none;
+            width: 100%; padding: 12px; font-size: 0.95rem; font-weight: 600; border-radius: 10px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4); margin-top: 10px; transition: 0.3s;
+        }
+        .login-btn:hover { background: linear-gradient(135deg, #43a047, #1b5e20); }
+        .error-msg { color: #d32f2f; font-size: 0.8rem; margin-top: 10px; display: none; }
+
+        /* ՎԱՀԱՆԱԿԻ ՈՃԵՐ */
+        .dashboard-container { max-width: 1100px; width: 100%; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: none; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 10px; }
+        h1 { color: #2e7d32; font-size: 1.4rem; }
+        
+        .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+        .competition-admin-btn { background: #fff3e0; color: #ef6c00; border: 1px solid #ffe0b2; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .competition-admin-btn:hover { background: #ffe0b2; }
+        .refresh-btn { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .refresh-btn:hover { background: #c8e6c9; }
+        .clear-btn { background: #ffebee; color: #c62828; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .clear-btn:hover { background: #ffcdd2; }
+        .logout-btn { background: #e0e0e0; color: #424242; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .logout-btn:hover { background: #d5d5d5; }
+
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px;
+        }
+        .stat-card { background: #e8f5e9; padding: 18px; border-radius: 12px; text-align: center; border-left: 5px solid #2e7d32; }
+        .stat-card.paper { border-left-color: #2196f3; background: #e3f2fd; }
+        .stat-card.plastic { border-left-color: #ff9800; background: #fff3e0; }
+        .stat-card.waste { border-left-color: #9c27b0; background: #f3e5f5; }
+        .stat-card h3 { font-size: 0.85rem; color: #555; margin-bottom: 6px; }
+        .stat-card span { font-size: 1.6rem; font-weight: bold; color: #222; }
+
+        h2 { font-size: 1.1rem; margin-top: 25px; margin-bottom: 15px; color: #444; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 0.85rem; }
+        th { background: #f1f8e9; color: #2e7d32; font-weight: 600; }
+        tr:hover { background: #f9f9f9; }
+        .badge { padding: 4px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+        .badge.student { background: #e3f2fd; color: #1565c0; }
+        .badge.teacher { background: #fff3e0; color: #ef6c00; }
+        .badge.paper { background: #e1f5fe; color: #0277bd; }
+        .badge.plastic { background: #fff8e1; color: #f57f17; }
+        .badge.waste { background: #fce4ec; color: #c2185b; }
+        .badge.approved { background: #e8f5e9; color: #2e7d32; }
+        .badge.rejected { background: #ffebee; color: #c62828; }
+        .badge.pending { background: #fff8e1; color: #f57f17; }
+
+        .btn-approve { background: #4caf50; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 600; margin-left: 5px; }
+        .btn-reject { background: #f44336; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 600; margin-left: 3px; }
+        .btn-delete-approved { background: #e53935; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 600; }
+        .btn-delete-approved:hover { background: #c62828; }
+
+        /* ՄՐՑՈՒՅԹԻ ՄՈԴԱԼ ՊԱՏՈՒՀԱՆ */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1000; padding: 20px;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: white; width: 100%; max-width: 850px; padding: 30px;
+            border-radius: 15px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; }
+    </style>
+</head>
+<body>
+
+    <!-- ՄՈՒՏՔԻ ԲԱԺԻՆ -->
+    <div id="loginSection" class="login-card">
+        <h2>🔒 Ուսուցչի Մուտք</h2>
+        <p>Մուտքագրեք տվյալները վահանակ մտնելու համար</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Մուտքանուն (Login)</label>
+                <input type="text" id="username" placeholder="Մուտքագրեք լոգինը" required>
+            </div>
+            <div class="form-group">
+                <label>Գաղտնաբառ (Password)</label>
+                <input type="password" id="password" placeholder="Մուտքագրեք գաղտնաբառը" required>
+            </div>
+            <button type="submit" class="login-btn">Մուտք գործել 🚀</button>
+            <p id="errorMsg" class="error-msg">Սխալ մուտքանուն կամ գաղտնաբառ:</p>
+        </form>
+    </div>
+
+    <!-- ՈՒՍՈՒՑՉԻ ՎԱՀԱՆԱԿ -->
+    <div id="dashboardSection" class="dashboard-container">
+        <div class="header-flex">
+            <h1>📊 Ուսուցչի Ընդհանուր Վահանակ</h1>
+            <div class="action-btns">
+                <button id="openCompetitionModal" class="competition-admin-btn" style="display:none;">🏆 Մրցույթ (Տեսանյութեր)</button>
+                <button id="refreshBtn" class="refresh-btn">Թարմացնել 🔄</button>
+                <button id="clearBtn" class="clear-btn">Մաքրել ցուցակը 🗑️</button>
+                <button id="logoutBtn" class="logout-btn">Դուրս գալ 🚪</button>
+            </div>
+        </div>
+
+        <!-- ԱՌԱՆՁԻՆ ՀԱՇՎԻՉՆԵՐ -->
+        <div class="stats-grid">
+            <div class="stat-card paper">
+                <h3>📄 Թուղթ</h3>
+                <span id="paperCount">0</span>
+            </div>
+            <div class="stat-card plastic">
+                <h3>🧴 Պլաստիկ</h3>
+                <span id="plasticCount">0</span>
+            </div>
+            <div class="stat-card waste">
+                <h3>🗑 Ընդհանուր Թափոններ</h3>
+                <span id="wasteCount">0</span>
+            </div>
+        </div>
+
+        <h2>📝 Բոլոր Գրանցվածների Աղյուսակ (Աղբ Նետողներ)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Անուն, Ազգանուն</th>
+                    <th>Էլ. փոստ</th>
+                    <th>Կարգավիճակ</th>
+                    <th>Թափոն</th>
+                    <th>Տեսանյութ / Մրցույթ</th>
+                    <th>Ամսաթիվ / Ժամ</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+        </table>
+
+        <h2>🏆 Մրցույթի Հաստատված Մասնակիցների Ցանկ</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Անուն, Ազգանուն</th>
+                    <th>Թափոն</th>
+                    <th>Կարգավիճակ</th>
+                    <th>Գործողություն</th>
+                </tr>
+            </thead>
+            <tbody id="approvedTableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const loginSection = document.getElementById('loginSection');
+        const dashboardSection = document.getElementById('dashboardSection');
+        const loginForm = document.getElementById('loginForm');
+        const errorMsg = document.getElementById('errorMsg');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            if (user === '9a_class_1234' && pass === 'SaveEarth') {
+                loginSection.style.display = 'none';
+                dashboardSection.style.display = 'block';
+                loadDashboardData();
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        });
+
+        refreshBtn.addEventListener('click', loadDashboardData);
+
+        logoutBtn.addEventListener('click', () => {
+            dashboardSection.style.display = 'none';
+            loginSection.style.display = 'block';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            errorMsg.style.display = 'none';
+        });
+
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Վստա՞հ եք, որ ցանկանում եք ջնջել բոլոր գրանցումները:')) {
+                localStorage.removeItem('ecoUsersList');
+                localStorage.removeItem('ecoSubmissions');
+                loadDashboardData();
+            }
+        });
+
+        function loadDashboardData() {
+            const usersList = JSON.parse(localStorage.getItem('ecoUsersList')) || [];
+            const submissions = JSON.parse(localStorage.getItem('ecoSubmissions')) || [];
+            
+            let paperTotal = 0;
+            let plasticTotal = 0;
+            let wasteTotal = 0;
+
+            usersList.forEach(user => {
+                if (user.waste === 'Թուղթ') paperTotal++;
+                else if (user.waste === 'Պլաստիկ') plasticTotal++;
+                else if (user.waste === 'Ընդհանուր թափոններ') wasteTotal++;
+            });
+
+            document.getElementById('paperCount').textContent = paperTotal;
+            document.getElementById('plasticCount').textContent = plasticTotal;
+            document.getElementById('wasteCount').textContent = wasteTotal;
+
+            const tableBody = document.getElementById('usersTableBody');
+            tableBody.innerHTML = '';
+            if (usersList.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #888;">Դեռևս գրանցվածներ չկան</td></tr>`;
+            } else {
+                usersList.forEach((user, index) => {
+                    const roleBadge = user.role === 'Աշակերտ' ? 'student' : 'teacher';
+                    
+                    let wasteClass = 'waste';
+                    if (user.waste === 'Թուղթ') wasteClass = 'paper';
+                    else if (user.waste === 'Պլաստիկ') wasteClass = 'plastic';
+
+                    // Ստուգում ենք՝ արդյոք այս օգտատերը ուղարկել է տեսանյութ
+                    const subMatch = submissions.find(s => s.email.toLowerCase() === user.email.toLowerCase());
+                    
+                    let videoColumnHTML = '';
+                    if (subMatch) {
+                        if (subMatch.status === 'approved') {
+                            videoColumnHTML = `🎥 ${subMatch.video} <span style="color:green; font-weight:600;">(Թույլատրված ✅)</span> <button class="btn-reject" onclick="updateStatus(${subMatch.id}, 'rejected')">Չթույլատրել ❌</button>`;
+                        } else if (subMatch.status === 'rejected') {
+                            videoColumnHTML = `🎥 ${subMatch.video} <span style="color:red; font-weight:600;">(Չթույլատրված ❌)</span>`;
+                        } else {
+                            videoColumnHTML = `
+                                🎥 ${subMatch.video}
+                                <button class="btn-approve" onclick="updateStatus(${subMatch.id}, 'approved')">Թույլատրել ✅</button>
+                                <button class="btn-reject" onclick="updateStatus(${subMatch.id}, 'rejected')">Չթույլատրել ❌</button>
+                            `;
+                        }
+                    } else {
+                        videoColumnHTML = '<span style="color:#888;">Տեսանյութ ուղարկված չէ</span>';
+                    }
+
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><strong>${user.name}</strong></td>
+                            <td>${user.email}</td>
+                            <td><span class="badge ${roleBadge}">${user.role}</span></td>
+                            <td><span class="badge ${wasteClass}">${user.waste}</span></td>
+                            <td>${videoColumnHTML}</td>
+                            <td>${user.date}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            const approvedTableBody = document.getElementById('approvedTableBody');
+            approvedTableBody.innerHTML = '';
+            const approvedList = submissions.filter(s => s.status === 'approved');
+
+            if (approvedList.length === 0) {
+                approvedTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #888;">Դեռևս հաստատված մրցույթի մասնակիցներ չկան</td></tr>`;
+            } else {
+                approvedList.forEach((item, index) => {
+                    approvedTableBody.innerHTML += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><strong>${item.name}</strong></td>
+                            <td>${item.waste || 'Թուղթ'}</td>
+                            <td><span class="badge approved">Անցկացված է մրցույթին 🏆</span></td>
+                            <td><button class="btn-delete-approved" onclick="deleteApproved(${item.id})">Ջնջել 🗑️</button></td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        window.updateStatus = function(id, newStatus) {
+            let submissions = JSON.parse(localStorage.getItem('ecoSubmissions')) || [];
+            submissions = submissions.map(item => {
+                if (item.id === id) {
+                    item.status = newStatus;
+                }
+                return item;
+            });
+            localStorage.setItem('ecoSubmissions', JSON.stringify(submissions));
+            loadDashboardData();
+        }
+
+        window.deleteApproved = function(id) {
+            let submissions = JSON.parse(localStorage.getItem('ecoSubmissions')) || [];
+            // Կամ ջնջում ենք կարգավիճակը (դարձնում pending կամ մաքրում)
+            submissions = submissions.map(item => {
+                if (item.id === id) {
+                    item.status = 'pending';
+                }
+                return item;
+            });
+            localStorage.setItem('ecoSubmissions', JSON.stringify(submissions));
+            loadDashboardData();
+        }
+    </script>
+</body>
+</html>
